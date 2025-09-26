@@ -1,0 +1,11 @@
+spring:
+  main:
+    web-application-type: reactive
+
+external:
+  api:
+    base-url: http://localhost:0
+
+logging:
+  level:
+    com.example.demo: DEBUG

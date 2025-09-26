@@ -1,0 +1,86 @@
+openapi: 3.0.1
+info:
+  title: External Asset API
+  version: 1.0.0
+paths:
+  /assets:
+    get:
+      operationId: getAssets
+      summary: Returns a heterogeneous list of assets.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Asset'
+components:
+  schemas:
+    Asset:
+      type: object
+      required:
+        - id
+        - assetType
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        assetType:
+          type: string
+          description: Top level discriminator between various asset categories.
+      discriminator:
+        propertyName: assetType
+        mapping:
+          vehicle: '#/components/schemas/Vehicle'
+          building: '#/components/schemas/Building'
+    Vehicle:
+      allOf:
+        - $ref: '#/components/schemas/Asset'
+        - type: object
+          required:
+            - vehicleKind
+          properties:
+            manufacturer:
+              type: string
+            vehicleKind:
+              type: string
+              description: Secondary discriminator that differentiates vehicle types.
+          discriminator:
+            propertyName: vehicleKind
+            mapping:
+              car: '#/components/schemas/Car'
+              boat: '#/components/schemas/Boat'
+    Building:
+      allOf:
+        - $ref: '#/components/schemas/Asset'
+        - type: object
+          properties:
+            floors:
+              type: integer
+              format: int32
+            location:
+              type: string
+    Car:
+      allOf:
+        - $ref: '#/components/schemas/Vehicle'
+        - type: object
+          properties:
+            doors:
+              type: integer
+              format: int32
+            rangeKm:
+              type: number
+              format: double
+    Boat:
+      allOf:
+        - $ref: '#/components/schemas/Vehicle'
+        - type: object
+          properties:
+            propulsion:
+              type: string
+            maxKnots:
+              type: number
+              format: double
